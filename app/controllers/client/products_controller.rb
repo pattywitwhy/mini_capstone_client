@@ -30,4 +30,31 @@ class Client::ProductsController < ApplicationController
     @product = response.parse
     render 'show.html.erb'
   end
+
+  def edit
+    response = HTTP.get("http://localhost:3000/api/products/#{params[:id]}")
+    @product = response.parse
+    render 'edit.html.erb'
+  end
+
+  def update
+    client_params = {
+                      name: params[:name],
+                      price: params[:price],
+                      description: params[:description],
+                      supplier_id: params[:supplier_id]
+                      # image_url: params[:image_url]
+                    }
+    response = HTTP.patch(
+                        "http://localhost:3000/api/products/#{params[:id]}",
+                        form: client_params
+                      )
+    product = response.parse
+    redirect_to "/client/products/#{ product["id"] }"
+  end
+
+  def destroy
+    resposne = HTTP.delete("http://localhost:3000/api/products/#{params[:id]}")
+    redirect_to "/client/products"
+  end
 end
